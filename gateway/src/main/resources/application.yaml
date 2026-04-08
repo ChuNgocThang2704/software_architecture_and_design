@@ -7,23 +7,23 @@ spring:
         webmvc:
           routes:
             - id: partner-service
-              uri: http://localhost:8085
+              uri: http://partner-service:8085
               predicates:
                 - Path=/api/partners/**
             - id: tour-service
-              uri: http://localhost:8084
+              uri: http://tour-service:8084
               predicates:
                 - Path=/api/tours/**
             - id: customer-service
-              uri: http://localhost:8082
+              uri: http://customer-service:8082
               predicates:
                 - Path=/api/customers/**
             - id: booking-service
-              uri: http://localhost:8083
+              uri: http://booking-service:8083
               predicates:
                 - Path=/api/bookings/**
             - id: user-service
-              uri: http://localhost:8081
+              uri: http://user-service:8081
               predicates:
                 - Path=/api/users/**
 server:

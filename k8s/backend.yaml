@@ -1,0 +1,256 @@
+# USER SERVICE (8081)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-app
+          image: toursystem/user-service:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db:3306/user_db?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 8081
+---
+# CUSTOMER SERVICE (8082)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service
+  template:
+    metadata:
+      labels:
+        app: customer-service
+    spec:
+      containers:
+        - name: customer-app
+          image: toursystem/customer-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db:3306/customer_db?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: customer-service
+  ports:
+    - port: 8082
+---
+# TOUR SERVICE (8084)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tour-service
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tour-service
+  template:
+    metadata:
+      labels:
+        app: tour-service
+    spec:
+      containers:
+        - name: tour-app
+          image: toursystem/tour-service:latest
+          ports:
+            - containerPort: 8084
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db:3306/tour_db?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tour-service
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: tour-service
+  ports:
+    - port: 8084
+---
+# BOOKING SERVICE (8083)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-service
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-service
+  template:
+    metadata:
+      labels:
+        app: booking-service
+    spec:
+      containers:
+        - name: booking-app
+          image: toursystem/booking-service:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db:3306/booking_db?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+            - name: SERVICES_USER_BASE_URL
+              value: http://user-service:8081
+            - name: SERVICES_CUSTOMER_BASE_URL
+              value: http://customer-service:8082
+            - name: SERVICES_TOUR_BASE_URL
+              value: http://tour-service:8084
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: booking-service
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: booking-service
+  ports:
+    - port: 8083
+---
+# PARTNER SERVICE (8085)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: partner-service
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: partner-service
+  template:
+    metadata:
+      labels:
+        app: partner-service
+    spec:
+      containers:
+        - name: partner-app
+          image: toursystem/partner-service:latest
+          ports:
+            - containerPort: 8085
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-db:3306/partner_db?createDatabaseIfNotExist=true
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: partner-service
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: partner-service
+  ports:
+    - port: 8085
+      targetPort: 8085
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-gateway
+  namespace: travel-booking-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway-app
+          image: toursystem/api-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
+              value: http://tour-service:8084
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
+              value: http://customer-service:8082
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
+              value: http://booking-service:8083
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
+              value: http://user-service:8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-gateway
+  namespace: travel-booking-system
+spec:
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
