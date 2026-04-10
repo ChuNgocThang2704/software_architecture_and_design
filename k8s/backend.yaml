@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: travel-booking-system
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: cGJoeWNsbHM=
+
+---
 # USER SERVICE (8081)
 apiVersion: apps/v1
 kind: Deployment
@@ -21,7 +31,7 @@ spec:
             - containerPort: 8081
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-db:3306/user_db?createDatabaseIfNotExist=true
+              value: jdbc:mysql://mysql-user-db:3306/user_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -62,7 +72,7 @@ spec:
             - containerPort: 8082
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-db:3306/customer_db?createDatabaseIfNotExist=true
+              value: jdbc:mysql://mysql-customer-db:3306/customer_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -103,7 +113,7 @@ spec:
             - containerPort: 8084
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-db:3306/tour_db?createDatabaseIfNotExist=true
+              value: jdbc:mysql://mysql-tour-db:3306/tour_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -144,7 +154,7 @@ spec:
             - containerPort: 8083
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-db:3306/booking_db?createDatabaseIfNotExist=true
+              value: jdbc:mysql://mysql-booking-db:3306/booking_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -191,7 +201,7 @@ spec:
             - containerPort: 8085
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql-db:3306/partner_db?createDatabaseIfNotExist=true
+              value: jdbc:mysql://mysql-partner-db:3306/partner_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -232,14 +242,16 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
-              value: http://tour-service:8084
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
-              value: http://customer-service:8082
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
-              value: http://booking-service:8083
-            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
-              value: http://user-service:8081
+            - name: USER_SERVICE_URL
+              value: "http://user-service:8081"
+            - name: BOOKING_SERVICE_URL
+              value: "http://booking-service:8083"
+            - name: TOUR_SERVICE_URL
+              value: "http://tour-service:8084"
+            - name: CUSTOMER_SERVICE_URL
+              value: "http://customer-service:8082"
+            - name: PARTNER_SERVICE_URL
+              value: "http://partner-service:8085"
 ---
 apiVersion: v1
 kind: Service

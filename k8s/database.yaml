@@ -1,87 +1,184 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: db-credentials
-  namespace: travel-booking-system
-type: Opaque
-stringData:
-  MYSQL_ROOT_PASSWORD: "pbhyclls"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: db-init-script
-  namespace: travel-booking-system
-data:
-  init.sql: |
-    CREATE DATABASE IF NOT EXISTS user_db;
-    CREATE DATABASE IF NOT EXISTS customer_db;
-    CREATE DATABASE IF NOT EXISTS tour_db;
-    CREATE DATABASE IF NOT EXISTS booking_db;
-    CREATE DATABASE IF NOT EXISTS partner_db;
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pvc
-  namespace: travel-booking-system
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
----
+# ---------------- DATABASE USER ----------------
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-db
+  name: mysql-user-db
   namespace: travel-booking-system
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      db: mysql-user
   template:
     metadata:
       labels:
-        app: mysql
+        db: mysql-user
     spec:
       containers:
-        - name: mysql-container
+        - name: mysql
           image: mysql:8.0
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: MYSQL_ROOT_PASSWORD
-          volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
-            - name: init-sql
-              mountPath: /docker-entrypoint-initdb.d/init.sql
-              subPath: init.sql
-      volumes:
-        - name: mysql-persistent-storage
-          persistentVolumeClaim:
-            claimName: mysql-pvc
-        - name: init-sql
-          configMap:
-            name: db-init-script
+              value: "pbhyclls"
+            - name: MYSQL_DATABASE
+              value: "user_db"
+          ports:
+            - containerPort: 3306
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-db
+  name: mysql-user-db
   namespace: travel-booking-system
 spec:
   selector:
-    app: mysql
+    db: mysql-user
   ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
+    - port: 3306
+---
+# ---------------- DATABASE CUSTOMER ----------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-customer-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    matchLabels:
+      db: mysql-customer
+  template:
+    metadata:
+      labels:
+        db: mysql-customer
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "pbhyclls"
+            - name: MYSQL_DATABASE
+              value: "customer_db"
+          ports:
+            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-customer-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    db: mysql-customer
+  ports:
+    - port: 3306
+---
+# ---------------- DATABASE TOUR ----------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-tour-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    matchLabels:
+      db: mysql-tour
+  template:
+    metadata:
+      labels:
+        db: mysql-tour
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "pbhyclls"
+            - name: MYSQL_DATABASE
+              value: "tour_db"
+          ports:
+            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-tour-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    db: mysql-tour
+  ports:
+    - port: 3306
+---
+# ---------------- DATABASE BOOKING ----------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-booking-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    matchLabels:
+      db: mysql-booking
+  template:
+    metadata:
+      labels:
+        db: mysql-booking
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "pbhyclls"
+            - name: MYSQL_DATABASE
+              value: "booking_db"
+          ports:
+            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-booking-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    db: mysql-booking
+  ports:
+    - port: 3306
+---
+# ---------------- DATABASE PARTNER ----------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-partner-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    matchLabels:
+      db: mysql-partner
+  template:
+    metadata:
+      labels:
+        db: mysql-partner
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "pbhyclls"
+            - name: MYSQL_DATABASE
+              value: "partner_db"
+          ports:
+            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-partner-db
+  namespace: travel-booking-system
+spec:
+  selector:
+    db: mysql-partner
+  ports:
+    - port: 3306

@@ -2,7 +2,7 @@ spring:
   application:
     name: booking-service
   datasource:
-    url: jdbc:mysql://localhost:3306/booking_db?createDatabaseIfNotExist=true
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/booking_db?createDatabaseIfNotExist=true}
     username: root
     password: pbhyclls
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,8 +19,8 @@ server:
 
 services:
   user:
-    base-url: http://user-service:8081
+    base-url: ${SERVICES_USER_BASE_URL:http://localhost:8081}
   customer:
-    base-url: http://customer-service:8082
+    base-url: ${SERVICES_CUSTOMER_BASE_URL:http://localhost:8082}
   tour:
-    base-url: http://tour-service:8084
+    base-url: ${SERVICES_TOUR_BASE_URL:http://localhost:8084}
