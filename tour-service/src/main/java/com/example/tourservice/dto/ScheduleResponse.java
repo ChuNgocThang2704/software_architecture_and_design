@@ -15,7 +15,8 @@ public class ScheduleResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private String type;
-    private BigDecimal price;
+    private BigDecimal adultPrice;
+    private BigDecimal childPrice;
     private Integer quantity;
     private String note;
     private Long tourId;

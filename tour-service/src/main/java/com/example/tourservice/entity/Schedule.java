@@ -37,7 +37,10 @@ public class Schedule {
     private String type;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
+    private BigDecimal adultPrice;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal childPrice;
 
     @Column(nullable = false)
     private Integer quantity;

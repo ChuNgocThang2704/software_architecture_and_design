@@ -57,7 +57,7 @@ public class TicketService {
             }
             scheduleCache.put(schedule.getId(), schedule);
 
-            BigDecimal unitPrice = resolveUnitPrice(schedule.getPrice(), item.getType());
+            BigDecimal unitPrice = resolveUnitPrice(schedule, item.getType());
 
             ScheduleTicket scheduleTicket = new ScheduleTicket();
             scheduleTicket.setTicket(ticket);
@@ -174,11 +174,11 @@ public class TicketService {
         }
     }
 
-    private BigDecimal resolveUnitPrice(BigDecimal schedulePrice, String ticketType) {
+    private BigDecimal resolveUnitPrice(ScheduleResponse schedule, String ticketType) {
         String normalizedType = ticketType == null ? "" : ticketType.trim().toUpperCase();
         return switch (normalizedType) {
-            case "CHILD" -> schedulePrice.divide(BigDecimal.valueOf(2));
-            case "ADULT", "STANDARD", "VIP" -> schedulePrice;
+            case "CHILD" -> schedule.getChildPrice();
+            case "ADULT" -> schedule.getAdultPrice();
             default -> throw new BadRequestException("Loai ve khong hop le");
         };
     }
