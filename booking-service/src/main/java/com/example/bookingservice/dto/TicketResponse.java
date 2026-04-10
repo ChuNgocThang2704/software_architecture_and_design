@@ -13,7 +13,6 @@ import java.util.List;
 @Builder
 public class TicketResponse {
     private Long id;
-    private Long tourId;
     private Long userId;
     private Long customerId;
     private String tourName;

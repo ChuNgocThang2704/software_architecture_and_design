@@ -53,7 +53,7 @@ public class CustomerService {
                 .name(request.getName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .address(request.getAddress())
+                .userId(request.getUserId())
                 .build();
         Customer savedCustomer = customerRepository.save(newCustomer);
         return mapToResponse(savedCustomer);
@@ -65,7 +65,7 @@ public class CustomerService {
                 .name(customer.getName())
                 .email(customer.getEmail())
                 .phone(customer.getPhone())
-                .address(customer.getAddress())
+                .userId(customer.getUserId())
                 .build();
     }
 }

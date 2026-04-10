@@ -22,9 +22,6 @@ public class Ticket {
     private Long id;
 
     @Column(nullable = false)
-    private Long tourId;
-
-    @Column(nullable = false)
     private Long userId; // Employee ID
 
     @Column(nullable = false)

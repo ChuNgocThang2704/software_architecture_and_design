@@ -36,4 +36,7 @@ public class PartnerRequest {
     @Future(message = "Expiration date must be in the future")
     private LocalDate expirationDate;
 
+    @NotNull
+    private Long userId;
+
 }

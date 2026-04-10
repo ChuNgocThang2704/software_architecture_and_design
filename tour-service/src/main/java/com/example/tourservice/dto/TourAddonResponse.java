@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 @Builder
 public class TourAddonResponse {
     private Long id;
+    private Long serviceId;
+    private Long partnerId;
     private String name;
     private String type;
     private String unit;

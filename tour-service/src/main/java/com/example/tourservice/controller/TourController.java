@@ -39,9 +39,20 @@ public class TourController {
         return tourService.getServicesByTour(id);
     }
 
+    @GetMapping("/schedules/{id}")
+    public ScheduleResponse getSchedule(@PathVariable Long id) {
+        return tourService.getSchedule(id);
+    }
+
     @PostMapping("/{id}/reserve")
     @ResponseStatus(NO_CONTENT)
     public void reserveSchedules(@PathVariable Long id, @RequestBody ReserveSchedulesRequest request) {
         tourService.reserveSchedules(id, request);
+    }
+
+    @PostMapping("/schedules/reserve")
+    @ResponseStatus(NO_CONTENT)
+    public void reserveSchedules(@RequestBody ReserveSchedulesRequest request) {
+        tourService.reserveSchedules(request);
     }
 }

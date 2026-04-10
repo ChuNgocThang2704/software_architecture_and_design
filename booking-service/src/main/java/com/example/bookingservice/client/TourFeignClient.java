@@ -1,6 +1,7 @@
 package com.example.bookingservice.client;
 
 import com.example.bookingservice.client.dto.ReserveSchedulesRequest;
+import com.example.bookingservice.client.dto.ScheduleResponse;
 import com.example.bookingservice.client.dto.TourResponse;
 import lombok.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,4 +20,7 @@ public interface TourFeignClient {
 
     @GetMapping("/api/tours/{id}")
     TourResponse getTourById(@PathVariable("id") Long id);
+
+    @GetMapping("/api/tours/schedules/{id}")
+    ScheduleResponse getScheduleById(@PathVariable("id") Long id);
 }

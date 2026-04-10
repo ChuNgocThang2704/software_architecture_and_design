@@ -31,29 +31,26 @@ public class TourService {
     private final TourAddonRepository tourAddonRepository;
 
     public List<TourResponse> getTours(String name) {
-        log.info("Tour-service đang gọi database lấy danh sách tour!");
-        List<Tour> tours;
-        if (name != null && !name.isBlank()) {
-            tours = tourRepository.findByNameContainingIgnoreCase(name);
-        } else {
-            tours = tourRepository.findAll();
-        }
+        log.info("Tour-service dang goi database lay danh sach tour!");
+        List<Tour> tours = (name != null && !name.isBlank())
+                ? tourRepository.findByNameContainingIgnoreCase(name)
+                : tourRepository.findAll();
         return tours.stream()
                 .map(this::mapTour)
                 .toList();
     }
 
     public TourResponse getTour(Long id) {
-        log.info("Tour-service đang gọi database lấy thông tin tour!");
+        log.info("Tour-service dang goi database lay thong tin tour!");
         Tour tour = tourRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Tour không tồn tại"));
+                .orElseThrow(() -> new NotFoundException("Tour khong ton tai"));
         return mapTour(tour);
     }
 
     public List<ScheduleResponse> getSchedulesByTour(Long tourId) {
-        log.info("Tour-service đang gọi database lấy danh sách lịch trình của tour!");
+        log.info("Tour-service dang goi database lay danh sach lich trinh cua tour!");
         if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour không tồn tại");
+            throw new NotFoundException("Tour khong ton tai");
         }
         return scheduleRepository.findByTourId(tourId).stream()
                 .map(this::mapSchedule)
@@ -61,30 +58,49 @@ public class TourService {
     }
 
     public List<TourAddonResponse> getServicesByTour(Long tourId) {
-        log.info("Tour-service đang gọi database lấy danh sách dịch vụ!");
+        log.info("Tour-service dang goi database lay danh sach dich vu!");
         if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour không tồn tại");
+            throw new NotFoundException("Tour khong ton tai");
         }
         return tourAddonRepository.findByTourId(tourId).stream()
                 .map(this::mapAddon)
                 .toList();
     }
 
+    public ScheduleResponse getSchedule(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NotFoundException("Lich trinh khong ton tai"));
+        return mapSchedule(schedule);
+    }
+
     @Transactional
     public void reserveSchedules(Long tourId, ReserveSchedulesRequest request) {
-        log.info("Booking-service gọi kiểm tra lịch trình!");
+        log.info("Booking-service goi kiem tra lich trinh theo tour!");
         if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour không tồn tại");
+            throw new NotFoundException("Tour khong ton tai");
         }
 
         for (ReserveScheduleItemRequest item : request.getItems()) {
             Schedule schedule = scheduleRepository.findByIdAndTourId(item.getScheduleId(), tourId)
-                    .orElseThrow(() -> new NotFoundException(
-                            "Không có lịch trình trong tour này"));
+                    .orElseThrow(() -> new NotFoundException("Khong co lich trinh trong tour nay"));
 
             if (schedule.getQuantity() < item.getQuantity()) {
-                throw new InsufficientSeatsException(
-                        "Không còn chỗ để đặt vé");
+                throw new InsufficientSeatsException("Khong con cho de dat ve");
+            }
+
+            schedule.setQuantity(schedule.getQuantity() - item.getQuantity());
+        }
+    }
+
+    @Transactional
+    public void reserveSchedules(ReserveSchedulesRequest request) {
+        log.info("Booking-service goi kiem tra lich trinh theo schedule!");
+        for (ReserveScheduleItemRequest item : request.getItems()) {
+            Schedule schedule = scheduleRepository.findById(item.getScheduleId())
+                    .orElseThrow(() -> new NotFoundException("Lich trinh khong ton tai"));
+
+            if (schedule.getQuantity() < item.getQuantity()) {
+                throw new InsufficientSeatsException("Khong con cho de dat ve");
             }
 
             schedule.setQuantity(schedule.getQuantity() - item.getQuantity());
@@ -110,6 +126,8 @@ public class TourService {
     private TourAddonResponse mapAddon(TourAddon addon) {
         return TourAddonResponse.builder()
                 .id(addon.getId())
+                .serviceId(addon.getService().getId())
+                .partnerId(addon.getService().getPartnerId())
                 .name(addon.getService().getName())
                 .type(addon.getService().getType())
                 .unit(addon.getService().getUnit())
@@ -129,6 +147,7 @@ public class TourService {
                 .quantity(schedule.getQuantity())
                 .note(schedule.getNote())
                 .tourId(schedule.getTour().getId())
+                .tourName(schedule.getTour().getName())
                 .build();
     }
 }

@@ -41,4 +41,7 @@ public class Partner {
     @Column(nullable = false)
     private LocalDate expirationDate;
 
+    @Column(nullable = false)
+    private Long userId;
+
 }

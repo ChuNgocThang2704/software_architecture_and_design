@@ -24,6 +24,6 @@ public class Customer {
     @Column
     private String phone;
 
-    @Column
-    private String address;
+    @Column(nullable = false)
+    private Long userId;
 }

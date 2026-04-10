@@ -37,6 +37,9 @@ public class TravelService {
     @Column(length = 500)
     private String note;
 
+    @Column(nullable = false)
+    private Long partnerId;
+
     @OneToMany(mappedBy = "service")
     private List<TourAddon> tourAddons = new ArrayList<>();
 
