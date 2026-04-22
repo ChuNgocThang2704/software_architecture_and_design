@@ -1,16 +1,15 @@
 package com.example.tourservice.controller;
 
-import com.example.tourservice.dto.ReserveSchedulesRequest;
+import com.example.tourservice.dto.UpdateSchedule;
 import com.example.tourservice.dto.ScheduleResponse;
 import com.example.tourservice.dto.TourAddonResponse;
 import com.example.tourservice.dto.TourResponse;
 import com.example.tourservice.service.TourService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/api/tours")
@@ -20,39 +19,23 @@ public class TourController {
     private final TourService tourService;
 
     @GetMapping
-    public List<TourResponse> getTours(@RequestParam(required = false) String name) {
-        return tourService.getTours(name);
-    }
-
-    @GetMapping("/{id}")
-    public TourResponse getTour(@PathVariable Long id) {
-        return tourService.getTour(id);
+    public ResponseEntity<List<TourResponse>> getTours(@RequestParam(required = false) String name) {
+        return ResponseEntity.ok(tourService.getTours(name));
     }
 
     @GetMapping("/{id}/schedules")
-    public List<ScheduleResponse> getSchedules(@PathVariable Long id) {
-        return tourService.getSchedulesByTour(id);
+    public ResponseEntity<List<ScheduleResponse>> getSchedules(@PathVariable Long id) {
+        return ResponseEntity.ok(tourService.getSchedulesByTour(id));
     }
 
     @GetMapping("/{id}/services")
-    public List<TourAddonResponse> getServices(@PathVariable Long id) {
-        return tourService.getServicesByTour(id);
+    public ResponseEntity<List<TourAddonResponse>> getServices(@PathVariable Long id) {
+        return ResponseEntity.ok(tourService.getServicesByTour(id));
     }
 
-    @GetMapping("/schedules/{id}")
-    public ScheduleResponse getSchedule(@PathVariable Long id) {
-        return tourService.getSchedule(id);
-    }
-
-    @PostMapping("/{id}/reserve")
-    @ResponseStatus(NO_CONTENT)
-    public void reserveSchedules(@PathVariable Long id, @RequestBody ReserveSchedulesRequest request) {
-        tourService.reserveSchedules(id, request);
-    }
-
-    @PostMapping("/schedules/reserve")
-    @ResponseStatus(NO_CONTENT)
-    public void reserveSchedules(@RequestBody ReserveSchedulesRequest request) {
-        tourService.reserveSchedules(request);
+    @PostMapping("/update")
+    public ResponseEntity<Void> updateSchedule(@RequestBody UpdateSchedule request) {
+        tourService.updateSchedule(request);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -19,6 +19,4 @@ public class ScheduleTicketResponse {
     private Integer quantity;
     private String type;
     private String note;
-    private BigDecimal unitPrice;
-    private BigDecimal lineTotal;
 }

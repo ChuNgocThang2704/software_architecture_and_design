@@ -17,5 +17,4 @@ public class TourResponse {
     private Integer time;
     private String status;
     private String note;
-    private List<TourAddonResponse> services;
 }

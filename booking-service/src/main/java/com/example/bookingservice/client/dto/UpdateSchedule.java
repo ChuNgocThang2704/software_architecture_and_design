@@ -1,6 +1,5 @@
 package com.example.bookingservice.client.dto;
 
-import com.example.bookingservice.client.TourFeignClient;
 import lombok.*;
 
 import java.util.List;
@@ -10,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReserveSchedulesRequest {
-    private List<ReserveScheduleItemRequest> items;
+public class UpdateSchedule {
+    private Long tourId;
+    private List<UpdateScheduleDetail> items;
 }

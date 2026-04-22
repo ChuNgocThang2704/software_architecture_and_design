@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "schedules")
+@Table(name = "tblschedule")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,19 +27,19 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "startDate", nullable = false)
     private LocalDate startDate;
 
-    @Column(nullable = false)
+    @Column(name = "endDate", nullable = false)
     private LocalDate endDate;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String type;
 
-    @Column(nullable = false, precision = 12, scale = 2)
+    @Column(name = "adultPrice", nullable = false, precision = 12, scale = 2)
     private BigDecimal adultPrice;
 
-    @Column(nullable = false, precision = 12, scale = 2)
+    @Column(name = "childPrice", nullable = false, precision = 12, scale = 2)
     private BigDecimal childPrice;
 
     @Column(nullable = false)
@@ -49,7 +49,7 @@ public class Schedule {
     private String note;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tour_id", nullable = false)
+    @JoinColumn(name = "tblTourId", nullable = false)
     private Tour tour;
 
 }

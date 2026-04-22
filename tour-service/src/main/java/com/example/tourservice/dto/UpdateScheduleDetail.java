@@ -9,12 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReserveScheduleItemRequest {
+public class UpdateScheduleDetail {
 
     @NotNull
     private Long scheduleId;
 
     @NotNull
-    @Min(1)
     private Integer quantity;
 }

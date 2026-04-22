@@ -15,7 +15,6 @@ public class TicketResponse {
     private Long id;
     private Long userId;
     private Long customerId;
-    private String tourName;
     private String customerName;
     private LocalDate datePayment;
     private String status;

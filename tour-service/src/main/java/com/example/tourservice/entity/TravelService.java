@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "services")
+@Table(name = "tbltravelservice")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,19 +25,19 @@ public class TravelService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String type;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String unit;
 
-    @Column(length = 500)
+    @Column
     private String note;
 
-    @Column(nullable = false)
+    @Column(name = "tblPartnerid", nullable = false)
     private Long partnerId;
 
     @OneToMany(mappedBy = "service")

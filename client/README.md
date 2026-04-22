@@ -1,16 +1,33 @@
-# React + Vite
+# Client architecture
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend da duoc sap xep lai de UI chi goi ham nghiep vu, khong goi endpoint truc tiep.
 
-Currently, two official plugins are available:
+## Luong goi API
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+`Page/Component -> src/api/* -> src/api/request.js -> Backend`
 
-## React Compiler
+## API folder
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```text
+src/api/
+  request.js     # axios instance + request() dung chung
+  users.js       # login
+  tours.js       # tour and schedule APIs
+  customers.js   # customer APIs
+  bookings.js    # booking APIs
+  partners.js    # partner APIs
+  index.js       # barrel exports
+```
 
-## Expanding the ESLint configuration
+## Nguyen tac
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Tat ca endpoint (`/api/...`) chi dat trong `src/api/*.js`.
+- `request.js` cung cap 1 ham chung `request({ method, url, data, params })`.
+- Page/component chi import ham nghiep vu tu `src/api`.
+
+## Chay nhanh
+
+```bash
+npm install
+npm run dev
+```

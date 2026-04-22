@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "tours")
+@Table(name = "tbltour")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,19 +25,19 @@ public class Tour {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String destination;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String type;
 
     @Column(nullable = false)
     private Integer time;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String status;
 
     @Column(length = 500)

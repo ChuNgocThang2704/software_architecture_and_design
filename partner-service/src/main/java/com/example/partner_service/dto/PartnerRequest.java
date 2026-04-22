@@ -15,28 +15,12 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class PartnerRequest {
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String company;
-
-    @NotBlank
     private String phone;
-
-    @NotBlank
     @Email
     private String email;
-
-    @NotNull
     private LocalDate signDate;
-
-    @NotNull
-    @Future(message = "Expiration date must be in the future")
     private LocalDate expirationDate;
-
-    @NotNull
-    private Long userId;
 
 }

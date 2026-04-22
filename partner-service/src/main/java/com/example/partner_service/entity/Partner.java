@@ -13,7 +13,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "partners")
+@Table(name = "tblpartner")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,25 +23,22 @@ public class Partner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String company;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "signDate", nullable = false)
     private LocalDate signDate;
 
-    @Column(nullable = false)
+    @Column(name = "expirationDate", nullable = false)
     private LocalDate expirationDate;
-
-    @Column(nullable = false)
-    private Long userId;
 
 }

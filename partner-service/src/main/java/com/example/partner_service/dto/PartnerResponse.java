@@ -17,5 +17,4 @@ public class PartnerResponse {
     private String email;
     private LocalDate signDate;
     private LocalDate expirationDate;
-    private Long userId;
 }

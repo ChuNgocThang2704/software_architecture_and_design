@@ -23,7 +23,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     public List<CustomerResponse> getCustomers(String name) {
-        log.info("Customer-service đang gọi database lấy danh sách khách hàng!");
+        log.info("CustomerService gọi db lấy danh sách khách hàng.");
         List<Customer> customers;
         if (name != null && !name.isBlank()) {
             customers = customerRepository.findByNameContainingIgnoreCase(name);
@@ -36,7 +36,7 @@ public class CustomerService {
     }
 
     public CustomerResponse getCustomerById(Long id) {
-        log.info("Booking-service gọi lấy thông tin khách hàng!");
+        log.info("CustomerService được gọi từ BookingService để lấy thông tin chi tiết khách hàng.");
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khách hàng"));
         return mapToResponse(customer);
@@ -44,7 +44,7 @@ public class CustomerService {
 
     @Transactional
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
-        log.info("Customer-service đang gọi database lưu thông tin khách hàng!");
+        log.info("CustomerService gọi db lưu thông tin khách hàng mới.");
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ConflictException("Email này đã được sử dụng");
         }
@@ -53,7 +53,6 @@ public class CustomerService {
                 .name(request.getName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .userId(request.getUserId())
                 .build();
         Customer savedCustomer = customerRepository.save(newCustomer);
         return mapToResponse(savedCustomer);
@@ -65,7 +64,6 @@ public class CustomerService {
                 .name(customer.getName())
                 .email(customer.getEmail())
                 .phone(customer.getPhone())
-                .userId(customer.getUserId())
                 .build();
     }
 }

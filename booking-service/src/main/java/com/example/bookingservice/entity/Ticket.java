@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "tblticket")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,13 +21,13 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId; // Employee ID
+    @Column(name = "tblUserid", nullable = false)
+    private Long userId;
 
-    @Column(nullable = false)
-    private Long customerId; // Customer ID
+    @Column(name = "tblCustomerid", nullable = false)
+    private Long customerId;
 
-    @Column(nullable = false)
+    @Column(name = "datePayment", nullable = false)
     private LocalDate datePayment;
 
     @Column(nullable = false, length = 50)

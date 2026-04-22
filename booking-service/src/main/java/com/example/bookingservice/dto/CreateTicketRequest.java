@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -34,4 +35,6 @@ public class CreateTicketRequest {
     @NotEmpty
     @Valid
     private List<ScheduleTicketRequest> scheduleTickets;
+
+    private BigDecimal total;
 }

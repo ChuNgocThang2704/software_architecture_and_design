@@ -1,4 +1,4 @@
-package com.example.bookingservice.dto;
+package com.example.bookingservice.client.dto;
 
 import lombok.*;
 

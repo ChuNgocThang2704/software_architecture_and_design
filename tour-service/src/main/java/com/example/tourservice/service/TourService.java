@@ -1,7 +1,7 @@
 package com.example.tourservice.service;
 
-import com.example.tourservice.dto.ReserveScheduleItemRequest;
-import com.example.tourservice.dto.ReserveSchedulesRequest;
+import com.example.tourservice.dto.UpdateScheduleDetail;
+import com.example.tourservice.dto.UpdateSchedule;
 import com.example.tourservice.dto.ScheduleResponse;
 import com.example.tourservice.dto.TourAddonResponse;
 import com.example.tourservice.dto.TourResponse;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +32,7 @@ public class TourService {
     private final TourAddonRepository tourAddonRepository;
 
     public List<TourResponse> getTours(String name) {
-        log.info("Tour-service dang goi database lay danh sach tour!");
+        log.info("TourService gọi db lấy danh sách tour.");
         List<Tour> tours = (name != null && !name.isBlank())
                 ? tourRepository.findByNameContainingIgnoreCase(name)
                 : tourRepository.findAll();
@@ -40,17 +41,10 @@ public class TourService {
                 .toList();
     }
 
-    public TourResponse getTour(Long id) {
-        log.info("Tour-service dang goi database lay thong tin tour!");
-        Tour tour = tourRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Tour khong ton tai"));
-        return mapTour(tour);
-    }
-
     public List<ScheduleResponse> getSchedulesByTour(Long tourId) {
-        log.info("Tour-service dang goi database lay danh sach lich trinh cua tour!");
+        log.info("TourService gọi db lấy danh sách lịch trình của tour.");
         if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour khong ton tai");
+            throw new NotFoundException("Tour không tồn tại");
         }
         return scheduleRepository.findByTourId(tourId).stream()
                 .map(this::mapSchedule)
@@ -58,59 +52,40 @@ public class TourService {
     }
 
     public List<TourAddonResponse> getServicesByTour(Long tourId) {
-        log.info("Tour-service dang goi database lay danh sach dich vu!");
+        log.info("TourService gọi db lấy danh sách dịch vụ đi kèm của tour.");
         if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour khong ton tai");
+            throw new NotFoundException("Tour không tồn tại");
         }
         return tourAddonRepository.findByTourId(tourId).stream()
                 .map(this::mapAddon)
                 .toList();
     }
 
-    public ScheduleResponse getSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new NotFoundException("Lich trinh khong ton tai"));
-        return mapSchedule(schedule);
-    }
 
     @Transactional
-    public void reserveSchedules(Long tourId, ReserveSchedulesRequest request) {
-        log.info("Booking-service goi kiem tra lich trinh theo tour!");
-        if (!tourRepository.existsById(tourId)) {
-            throw new NotFoundException("Tour khong ton tai");
+    public void updateSchedule(UpdateSchedule request) {
+        log.info("TourService được gọi từ BookingService cập nhật chỗ trống lịch trình theo tour.");
+        if (!tourRepository.existsById(request.getTourId())) {
+            throw new NotFoundException("Tour không tồn tại");
         }
 
-        for (ReserveScheduleItemRequest item : request.getItems()) {
-            Schedule schedule = scheduleRepository.findByIdAndTourId(item.getScheduleId(), tourId)
-                    .orElseThrow(() -> new NotFoundException("Khong co lich trinh trong tour nay"));
+        List<Schedule> schedulesToUpdate = new ArrayList<>();
+        for (UpdateScheduleDetail item : request.getItems()) {
+            Schedule schedule = scheduleRepository.findByIdAndTourId(item.getScheduleId(), request.getTourId())
+                    .orElseThrow(() -> new NotFoundException("Không có lịch trình trong tour này"));
 
             if (schedule.getQuantity() < item.getQuantity()) {
-                throw new InsufficientSeatsException("Khong con cho de dat ve");
+                throw new InsufficientSeatsException("Không còn chỗ để đặt vé");
             }
 
             schedule.setQuantity(schedule.getQuantity() - item.getQuantity());
+            schedulesToUpdate.add(schedule);
         }
-    }
-
-    @Transactional
-    public void reserveSchedules(ReserveSchedulesRequest request) {
-        log.info("Booking-service goi kiem tra lich trinh theo schedule!");
-        for (ReserveScheduleItemRequest item : request.getItems()) {
-            Schedule schedule = scheduleRepository.findById(item.getScheduleId())
-                    .orElseThrow(() -> new NotFoundException("Lich trinh khong ton tai"));
-
-            if (schedule.getQuantity() < item.getQuantity()) {
-                throw new InsufficientSeatsException("Khong con cho de dat ve");
-            }
-
-            schedule.setQuantity(schedule.getQuantity() - item.getQuantity());
-        }
+        
+        scheduleRepository.saveAll(schedulesToUpdate);
     }
 
     private TourResponse mapTour(Tour tour) {
-        List<TourAddonResponse> services = tour.getTourServices().stream()
-                .map(this::mapAddon)
-                .toList();
         return TourResponse.builder()
                 .id(tour.getId())
                 .name(tour.getName())
@@ -119,7 +94,6 @@ public class TourService {
                 .time(tour.getTime())
                 .status(tour.getStatus())
                 .note(tour.getNote())
-                .services(services)
                 .build();
     }
 

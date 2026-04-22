@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReserveScheduleItemRequest {
+public class UpdateScheduleDetail {
     private Long scheduleId;
     private Integer quantity;
 }

@@ -1,10 +1,6 @@
-import axios from 'axios';
-
-const apiClient = axios.create({
-    baseURL: 'http://localhost:8080',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-export default apiClient;
+export * from './request';
+export * from './user';
+export * from './partner';
+export * from './tour';
+export * from './customer';
+export * from './booking';

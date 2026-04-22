@@ -16,7 +16,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "schedule_tickets")
+@Table(name = "tblscheduleticket")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,23 +26,20 @@ public class ScheduleTicket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "tblScheduleid", nullable = false)
     private Long scheduleId;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String type;
 
     @Column(length = 500)
     private String note;
 
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal unitPrice;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ticket_id", nullable = false)
+    @JoinColumn(name = "tblTicketId", nullable = false)
     private Ticket ticket;
 
 }

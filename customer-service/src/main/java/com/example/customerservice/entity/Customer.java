@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "tblcustomer")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,7 +23,4 @@ public class Customer {
 
     @Column
     private String phone;
-
-    @Column(nullable = false)
-    private Long userId;
 }

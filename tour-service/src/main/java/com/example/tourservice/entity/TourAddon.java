@@ -16,7 +16,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "tour_services")
+@Table(name = "tbltouraddon")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,11 +36,11 @@ public class TourAddon {
     private Integer quantity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "service_id", nullable = false)
+    @JoinColumn(name = "tblTravelServiceId", nullable = false)
     private TravelService service;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tour_id", nullable = false)
+    @JoinColumn(name = "tblTourId", nullable = false)
     private Tour tour;
 
 }

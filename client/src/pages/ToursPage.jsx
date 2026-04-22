@@ -1,156 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import apiClient from '../api';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { searchTours } from '../api';
 
 function ToursPage() {
-    const [tours, setTours] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+  const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-    const fetchTours = async (name = '') => {
-        setLoading(true);
-        try {
-            const response = await apiClient.get(`/api/tours?name=${name}`);
-            setTours(response.data);
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách tour:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleSearchTours = async (name = '') => {
+    setLoading(true);
+    try {
+      const toursData = await searchTours(name);
+      setTours(toursData);
+    } catch (error) {
+      alert('Không thể tải danh sách tour.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        fetchTours(searchTerm);
-    };
+  const handleSearch = (event) => {
+    event.preventDefault();
+    handleSearchTours(searchTerm);
+  };
 
-    return (
-        <div style={styles.container}>
-            <Link to="/" style={styles.backLink}>&larr; Quay lại Menu</Link>
-            <h2 style={styles.title}>Danh sách Tour</h2>
+  const formatTime = (time) => {
+    if (time === null || time === undefined) {
+      return '';
+    }
+    return `${time} ngày`;
+  };
 
-            <form onSubmit={handleSearch} style={styles.searchForm}>
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm tour theo tên..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    style={styles.searchInput}
-                />
-                <button type="submit" style={styles.searchButton}>Tìm kiếm</button>
-            </form>
+  return (
+    <div style={styles.container}>
+      <Link to="/" style={styles.backLink}>&larr; Quay lại Menu</Link>
+      <h2 style={styles.title}>Danh sách tour</h2>
 
-            {loading ? (
-                <p style={styles.loadingText}>Đang tải danh sách tour...</p>
-            ) : (
-                <ul style={styles.tourList}>
-                    {tours.map(tour => (
-                        <li key={tour.id} style={styles.tourItem}>
-                            <h3 style={styles.tourName}>{tour.name}</h3>
-                            <p style={styles.tourDetail}><strong>Điểm đến:</strong> {tour.destination}</p>
-                            <p style={styles.tourDetail}><strong>Thời gian:</strong> {tour.time} ngày</p>
-                            <Link to={`/booking/${tour.id}`} style={styles.viewButtonLink}>
-                                <button style={styles.viewButton}>Xem lịch trình & Đặt vé</button>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+      <form onSubmit={handleSearch} style={styles.searchForm}>
+        <input
+          id="inName"
+          type="text"
+          placeholder="Nhập tên tour cần tìm"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          style={styles.searchInput}
+        />
+        <button id="btnSearch" type="submit" style={styles.button}>Tìm</button>
+      </form>
+
+      {loading ? (
+        <p>Đang tải danh sách tour...</p>
+      ) : (
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Tên tour</th>
+              <th style={styles.th}>Điểm đến</th>
+              <th style={styles.th}>Loại tour</th>
+              <th style={styles.th}>Thời gian</th>
+              <th style={styles.th}>Ghi chú</th>
+              <th style={styles.th}>Trạng thái</th>
+              <th style={styles.th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {tours.length === 0 && (
+              <tr>
+                <td colSpan="7" style={styles.emptyCell}>Không có tour phù hợp.</td>
+              </tr>
             )}
-        </div>
-    );
+            {tours.map((tour) => (
+              <tr key={tour.id}>
+                <td style={styles.td}>{tour.name}</td>
+                <td style={styles.td}>{tour.destination}</td>
+                <td style={styles.td}>{tour.type || ''}</td>
+                <td style={styles.td}>{formatTime(tour.time)}</td>
+                <td style={styles.td}>{tour.note || ''}</td>
+                <td style={styles.td}>{tour.status || ''}</td>
+                <td style={styles.td}>
+                  <button
+                    type="button"
+                    style={styles.button}
+                    onClick={() => navigate(`/booking/${tour.id}`, { state: { tour } })}
+                  >
+                    Chọn
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
 
 const styles = {
-    container: {
-        padding: '20px',
-    },
-    backLink: {
-        textDecoration: 'none',
-        color: '#007bff',
-        fontWeight: 'bold',
-        marginBottom: '20px',
-        display: 'inline-block',
-    },
-    title: {
-        color: '#007bff',
-        marginBottom: '25px',
-        textAlign: 'center',
-    },
-    searchForm: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: '30px',
-        gap: '10px',
-    },
-    searchInput: {
-        padding: '10px 15px',
-        border: '1px solid #ced4da',
-        borderRadius: '5px',
-        fontSize: '1em',
-        width: '300px',
-    },
-    searchButton: {
-        padding: '10px 20px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        transition: 'background-color 0.2s ease',
-    },
-    searchButtonHover: {
-        backgroundColor: '#0056b3',
-    },
-    loadingText: {
-        textAlign: 'center',
-        fontSize: '1.1em',
-        color: '#6c757d',
-    },
-    tourList: {
-        listStyle: 'none',
-        padding: 0,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '20px',
-    },
-    tourItem: {
-        border: '1px solid #e9ecef',
-        borderRadius: '8px',
-        padding: '20px',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 2px 8px rgba(0,0,0,.05)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-    },
-    tourName: {
-        color: '#343a40',
-        marginBottom: '10px',
-        fontSize: '1.5em',
-    },
-    tourDetail: {
-        margin: '5px 0',
-        color: '#6c757d',
-    },
-    viewButtonLink: {
-        textDecoration: 'none',
-        marginTop: '15px',
-    },
-    viewButton: {
-        width: '100%',
-        padding: '10px 15px',
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        transition: 'background-color 0.2s ease',
-    },
-    viewButtonHover: {
-        backgroundColor: '#218838',
-    },
+  container: { padding: '10px 0' },
+  backLink: {
+    textDecoration: 'none',
+    color: '#007bff',
+    fontWeight: 'bold',
+    marginBottom: '20px',
+    display: 'inline-block',
+  },
+  title: {
+    color: '#007bff',
+    marginBottom: '20px',
+    textAlign: 'center',
+  },
+  searchForm: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '10px',
+    marginBottom: '20px',
+    flexWrap: 'wrap',
+  },
+  searchInput: {
+    width: '320px',
+    padding: '10px',
+    border: '1px solid #ced4da',
+    borderRadius: '5px',
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+  },
+  th: {
+    border: '1px solid #dee2e6',
+    padding: '10px',
+    backgroundColor: '#f8f9fa',
+    textAlign: 'left',
+  },
+  td: {
+    border: '1px solid #dee2e6',
+    padding: '10px',
+  },
+  emptyCell: {
+    border: '1px solid #dee2e6',
+    padding: '16px',
+    textAlign: 'center',
+  },
+  button: {
+    padding: '8px 14px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
 };
 
 export default ToursPage;

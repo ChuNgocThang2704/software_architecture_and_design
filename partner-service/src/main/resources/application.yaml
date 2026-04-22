@@ -2,13 +2,15 @@ spring:
   application:
     name: partner-service
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/partner_db?createDatabaseIfNotExist=true}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/partner_service_db}
     username: root
     password: pbhyclls
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
     properties:
       hibernate:
@@ -16,7 +18,3 @@ spring:
 
 server:
   port: 8085
-
-services:
-  user:
-    base-url: ${SERVICES_USER_BASE_URL:http://localhost:8081}

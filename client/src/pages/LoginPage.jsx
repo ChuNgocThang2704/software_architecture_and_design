@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../api';
+import { getApiErrorMessage, login } from '../api';
+import { User } from '../model';
 
 function LoginPage({ onLoginSuccess }) {
     const [email, setEmail] = useState('a@gmail.com');
@@ -10,11 +11,12 @@ function LoginPage({ onLoginSuccess }) {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await apiClient.post('/api/users/login', { email, password });
-            onLoginSuccess(response.data);
+            const user = new User(null, '', email, password, '');
+            const loggedInUser = await login(user);
+            onLoginSuccess(loggedInUser);
             navigate('/');
         } catch (err) {
-            alert('Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
+            alert(getApiErrorMessage(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.'));
             console.error(err);
         }
     };
@@ -26,6 +28,7 @@ function LoginPage({ onLoginSuccess }) {
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Email:</label>
                     <input
+                        id="inEmail"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -36,6 +39,7 @@ function LoginPage({ onLoginSuccess }) {
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Password:</label>
                     <input
+                        id="inPassword"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -43,7 +47,7 @@ function LoginPage({ onLoginSuccess }) {
                         style={styles.input}
                     />
                 </div>
-                <button type="submit" style={styles.button}>Đăng nhập</button>
+                <button id="btnLogin" type="submit" style={styles.button}>Đăng nhập</button>
             </form>
         </div>
     );
