@@ -1,7 +1,7 @@
 package com.example.customerservice.controller;
 
 
-import com.example.customerservice.dto.CustomerResponse;
+import com.example.customerservice.client.CustomerResponse;
 import com.example.customerservice.entity.Customer;
 import com.example.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;

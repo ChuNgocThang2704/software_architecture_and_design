@@ -1,4 +1,4 @@
-package com.example.customerservice.dto;
+package com.example.customerservice.client;
 
 import lombok.*;
 

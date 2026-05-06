@@ -33,8 +33,8 @@ public class TicketService {
         log.info("TicketService tiến hành đặt vé mới.");
         validateCustomer(request.getCustomerId());
         
-        UpdateSchedule updateScheduleReq = new UpdateSchedule();
-        updateScheduleReq.setTourId(tourId);
+        UpdateSchedule updateSchedule = new UpdateSchedule();
+        updateSchedule.setTourId(tourId);
         List<UpdateScheduleDetail> details = new java.util.ArrayList<>();
         for (ScheduleTicket itemReq : request.getScheduleTickets()) {
             UpdateScheduleDetail detail = new UpdateScheduleDetail();
@@ -42,8 +42,9 @@ public class TicketService {
             detail.setQuantity(itemReq.getQuantity());
             details.add(detail);
         }
-        updateScheduleReq.setItems(details);
-        updateSchedule(updateScheduleReq);
+        updateSchedule.setItems(details);
+
+        updateSchedule(updateSchedule);
 
         request.setStatus(request.getStatus() == null || request.getStatus().isBlank() ? "PENDING" : request.getStatus());
         if (request.getTotal() == null) {
@@ -53,16 +54,14 @@ public class TicketService {
             st.setTicket(request);
         }
 
-        Ticket savedTicket = ticketRepository.save(request);
-        return savedTicket;
+        return ticketRepository.save(request);
     }
 
     @Transactional(readOnly = true)
     public Ticket getTicket(Long id) {
         log.info("TicketService gọi db để lấy thông tin chi tiết vé.");
-        Ticket ticket = ticketRepository.findById(id)
+        return ticketRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Vé không tồn tại"));
-        return ticket;
     }
 
     private void validateCustomer(Long customerId) {

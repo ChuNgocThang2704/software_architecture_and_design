@@ -1,7 +1,7 @@
 package com.example.customerservice.service;
 
 
-import com.example.customerservice.dto.CustomerResponse;
+import com.example.customerservice.client.CustomerResponse;
 import com.example.customerservice.entity.Customer;
 import com.example.customerservice.exception.ConflictException;
 import com.example.customerservice.exception.NotFoundException;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +43,7 @@ public class CustomerService {
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ConflictException("Email này đã được sử dụng");
         }
-
-        Customer newCustomer = Customer.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .build();
-        return customerRepository.save(newCustomer);
+        return customerRepository.save(request);
     }
 
     private CustomerResponse mapToResponse(Customer customer) {
