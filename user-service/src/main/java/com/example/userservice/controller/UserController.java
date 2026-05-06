@@ -1,7 +1,6 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.LoginRequest;
-import com.example.userservice.dto.UserResponse;
+import com.example.userservice.entity.User;
 import com.example.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<User> login(@RequestBody User request) {
         return ResponseEntity.ok(userService.login(request));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User request) {
+        try {
+            return ResponseEntity.ok(userService.register(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

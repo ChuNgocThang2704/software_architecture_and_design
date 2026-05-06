@@ -8,8 +8,8 @@ function mapToTicket(data) {
   return ticket;
 }
 
-export async function createBooking(ticket) {
-  const response = await request('POST', '/api/bookings', ticket);
+export async function createBooking(tourId, ticket) {
+  const response = await request('POST', `/api/bookings?tourId=${tourId}`, ticket);
   return mapToTicket(response.data);
 }
 

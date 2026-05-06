@@ -1,6 +1,6 @@
 package com.example.customerservice.service;
 
-import com.example.customerservice.dto.CreateCustomerRequest;
+
 import com.example.customerservice.dto.CustomerResponse;
 import com.example.customerservice.entity.Customer;
 import com.example.customerservice.exception.ConflictException;
@@ -22,17 +22,13 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public List<CustomerResponse> getCustomers(String name) {
+    public List<Customer> getCustomers(String name) {
         log.info("CustomerService gọi db lấy danh sách khách hàng.");
-        List<Customer> customers;
         if (name != null && !name.isBlank()) {
-            customers = customerRepository.findByNameContainingIgnoreCase(name);
+            return customerRepository.findByNameContainingIgnoreCase(name);
         } else {
-            customers = customerRepository.findAll();
+            return customerRepository.findAll();
         }
-        return customers.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
     }
 
     public CustomerResponse getCustomerById(Long id) {
@@ -43,7 +39,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public CustomerResponse createCustomer(CreateCustomerRequest request) {
+    public Customer createCustomer(Customer request) {
         log.info("CustomerService gọi db lưu thông tin khách hàng mới.");
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ConflictException("Email này đã được sử dụng");
@@ -54,8 +50,7 @@ public class CustomerService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .build();
-        Customer savedCustomer = customerRepository.save(newCustomer);
-        return mapToResponse(savedCustomer);
+        return customerRepository.save(newCustomer);
     }
 
     private CustomerResponse mapToResponse(Customer customer) {

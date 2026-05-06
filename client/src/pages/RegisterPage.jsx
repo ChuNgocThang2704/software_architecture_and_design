@@ -1,30 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getApiErrorMessage, login } from '../api';
+import { getApiErrorMessage, register } from '../api';
 import { User } from '../model';
 
-function LoginPage({ onLoginSuccess }) {
-    const [email, setEmail] = useState('a@gmail.com');
-    const [password, setPassword] = useState('123456');
+function RegisterPage() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const user = new User(null, '', email, password, '');
-            const loggedInUser = await login(user);
-            onLoginSuccess(loggedInUser);
-            navigate('/');
+            const user = new User(null, name, email, password, 'USER');
+            await register(user);
+            alert('Đăng ký thành công! Vui lòng đăng nhập.');
+            navigate('/login');
         } catch (err) {
-            alert(getApiErrorMessage(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.'));
+            alert(getApiErrorMessage(err, 'Đăng ký thất bại. Email có thể đã được sử dụng.'));
             console.error(err);
         }
     };
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Đăng nhập</h2>
-            <form onSubmit={handleLogin} style={styles.form}>
+            <h2 style={styles.title}>Đăng ký tài khoản</h2>
+            <form onSubmit={handleRegister} style={styles.form}>
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>Họ và tên:</label>
+                    <input
+                        id="inName"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        style={styles.input}
+                    />
+                </div>
                 <div style={styles.formGroup}>
                     <label style={styles.label}>Email:</label>
                     <input
@@ -37,7 +49,7 @@ function LoginPage({ onLoginSuccess }) {
                     />
                 </div>
                 <div style={styles.formGroup}>
-                    <label style={styles.label}>Password:</label>
+                    <label style={styles.label}>Mật khẩu:</label>
                     <input
                         id="inPassword"
                         type="password"
@@ -47,9 +59,9 @@ function LoginPage({ onLoginSuccess }) {
                         style={styles.input}
                     />
                 </div>
-                <button id="btnLogin" type="submit" style={styles.button}>Đăng nhập</button>
-                <div style={styles.registerLink}>
-                    Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+                <button id="btnRegister" type="submit" style={styles.button}>Đăng ký</button>
+                <div style={styles.loginLink}>
+                    Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
                 </div>
             </form>
         </div>
@@ -92,15 +104,10 @@ const styles = {
         borderRadius: '5px',
         fontSize: '1em',
     },
-    errorText: {
-        color: '#dc3545',
-        marginBottom: '15px',
-        textAlign: 'center',
-    },
     button: {
         width: '100%',
         padding: '12px 20px',
-        backgroundColor: '#007bff',
+        backgroundColor: '#28a745',
         color: 'white',
         border: 'none',
         borderRadius: '5px',
@@ -108,14 +115,12 @@ const styles = {
         fontSize: '1.1em',
         fontWeight: 'bold',
         transition: 'background-color 0.2s ease',
+        marginTop: '10px'
     },
-    buttonHover: {
-        backgroundColor: '#0056b3',
-    },
-    registerLink: {
+    loginLink: {
         marginTop: '20px',
         textAlign: 'center'
     }
 };
 
-export default LoginPage;
+export default RegisterPage;

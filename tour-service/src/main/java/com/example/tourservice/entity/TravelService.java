@@ -13,6 +13,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbltravelservice")
@@ -40,6 +42,7 @@ public class TravelService {
     @Column(name = "tblPartnerid", nullable = false)
     private Long partnerId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "service")
     private List<TourAddon> tourAddons = new ArrayList<>();
 

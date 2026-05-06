@@ -1,7 +1,8 @@
 package com.example.customerservice.controller;
 
-import com.example.customerservice.dto.CreateCustomerRequest;
+
 import com.example.customerservice.dto.CustomerResponse;
+import com.example.customerservice.entity.Customer;
 import com.example.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<CustomerResponse>> getCustomers(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<Customer>> getCustomers(@RequestParam(required = false) String name) {
         return ResponseEntity.ok(customerService.getCustomers(name));
     }
 
@@ -28,7 +29,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CreateCustomerRequest request) {
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.createCustomer(request));
     }
 }

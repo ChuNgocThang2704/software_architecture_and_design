@@ -93,10 +93,10 @@ function SchedulePage() {
     return <p style={styles.errorText}>{error}</p>;
   }
 
-  const displayTourName = tour?.name || schedules[0]?.tourName || `Tour ${tourId}`;
-  const displayTourDestination = tour?.destination || '';
-  const displayTourType = tour?.type || '';
-  const displayTourTime = tour?.time ? `${tour.time} ngày` : '';
+  const displayTourName = tour?.name || schedules[0]?.tour?.name || schedules[0]?.tourName || `Tour ${tourId}`;
+  const displayTourDestination = tour?.destination || schedules[0]?.tour?.destination || '';
+  const displayTourType = tour?.type || schedules[0]?.tour?.type || '';
+  const displayTourTime = tour?.time ? `${tour.time} ngày` : (schedules[0]?.tour?.time ? `${schedules[0]?.tour?.time} ngày` : '');
 
   return (
     <div style={styles.container}>
@@ -142,8 +142,8 @@ function SchedulePage() {
             <tbody>
               {services.map((service) => (
                 <tr key={service.id}>
-                  <td style={styles.td}>{service.name}</td>
-                  <td style={styles.td}>{service.unit || ''}</td>
+                  <td style={styles.td}>{service.service?.name || service.name}</td>
+                  <td style={styles.td}>{service.service?.unit || service.unit || ''}</td>
                   <td style={styles.td}>{service.quantity ?? ''}</td>
                   <td style={styles.td}>{formatMoney(service.price)}</td>
                   <td style={styles.td}>{service.note || ''}</td>

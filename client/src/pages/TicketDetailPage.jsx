@@ -84,11 +84,11 @@ function TicketDetailPage() {
           <tbody>
             <tr>
               <td style={styles.infoLabel}>Tên tour</td>
-              <td style={styles.infoValue}>{stateContext?.tour?.name || 'Đang cập nhật...'}</td>
+              <td style={styles.infoValue}>{stateContext?.tour?.name || stateContext?.schedule?.tour?.name || 'Đang cập nhật...'}</td>
             </tr>
             <tr>
               <td style={styles.infoLabel}>Tên khách hàng</td>
-              <td style={styles.infoValue}>{ticket.customerName}</td>
+              <td style={styles.infoValue}>{stateContext?.customer?.name || ticket.customerName || 'Đang cập nhật...'}</td>
             </tr>
             <tr>
               <td style={styles.infoLabel}>Ngày thanh toán</td>

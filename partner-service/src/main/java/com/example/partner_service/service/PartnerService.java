@@ -1,7 +1,6 @@
 package com.example.partner_service.service;
 
-import com.example.partner_service.dto.PartnerRequest;
-import com.example.partner_service.dto.PartnerResponse;
+
 import com.example.partner_service.entity.Partner;
 import com.example.partner_service.exception.ConflictException;
 import com.example.partner_service.repository.PartnerRepository;
@@ -18,36 +17,13 @@ public class PartnerService {
 
     private final PartnerRepository partnerRepository;
 
-    public PartnerResponse createPartner(PartnerRequest request) {
+    public Partner createPartner(Partner request) {
         log.info("PartnerService gọi db để lưu thông tin đối tác mới.");
 
         if (partnerRepository.existsByNameAndCompany(request.getName(), request.getCompany())) {
             throw new ConflictException("Đối tác đã tồn tại trong hệ thống");
         }
 
-        Partner partner = new Partner();
-        mapRequestToEntity(request, partner);
-        return mapToResponse(partnerRepository.save(partner));
-    }
-
-    private void mapRequestToEntity(PartnerRequest request, Partner partner) {
-        partner.setName(request.getName());
-        partner.setCompany(request.getCompany());
-        partner.setPhone(request.getPhone());
-        partner.setEmail(request.getEmail());
-        partner.setSignDate(request.getSignDate());
-        partner.setExpirationDate(request.getExpirationDate());
-    }
-
-    private PartnerResponse mapToResponse(Partner partner) {
-        return new PartnerResponse(
-                partner.getId(),
-                partner.getName(),
-                partner.getCompany(),
-                partner.getPhone(),
-                partner.getEmail(),
-                partner.getSignDate(),
-                partner.getExpirationDate()
-        );
+        return partnerRepository.save(request);
     }
 }

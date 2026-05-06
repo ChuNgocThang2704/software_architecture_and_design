@@ -47,11 +47,10 @@ function ConfirmPage({ user }) {
 
       const ticket = new Ticket(null, currentUser.id, customer.id, new Date().toISOString().split('T')[0], 'PENDING', '', grandTotalAmount, scheduleTickets);
 
-      const payload = { tourId: tourId, ...ticket };
-      const createdBooking = await createBooking(payload);
+      const createdBooking = await createBooking(tourId, ticket);
 
       alert('Đặt vé thành công.');
-      navigate(`/ticket/${createdBooking.id}`, { state: { tour, schedule, ticketCart, services, grandTotalAmount } });
+      navigate(`/ticket/${createdBooking.id}`, { state: { tour, schedule, ticketCart, services, grandTotalAmount, customer } });
     } catch (error) {
       const message = getApiErrorMessage(error, 'Không thể đặt vé lúc này.');
       alert(message);
@@ -78,7 +77,7 @@ function ConfirmPage({ user }) {
           <tbody>
             <tr>
               <td style={styles.infoLabel}>Tên tour</td>
-              <td style={styles.infoValue}>{tour.name}</td>
+              <td style={styles.infoValue}>{tour?.name || schedule?.tour?.name || 'Đang cập nhật...'}</td>
             </tr>
             <tr>
               <td style={styles.infoLabel}>Bắt đầu</td>
@@ -146,15 +145,15 @@ function ConfirmPage({ user }) {
             </tr>
           </thead>
           <tbody>
-            {services.map((service, index) => {
+              {services.map((service, index) => {
               const quantity = Number(service.quantity || 0);
               const price = Number(service.price || 0);
               const lineTotal = quantity * price;
               return (
                 <tr key={service.id}>
                   <td style={styles.td}>{index + 1}</td>
-                  <td style={styles.td}>{service.name}</td>
-                  <td style={styles.td}>{service.unit || ''}</td>
+                  <td style={styles.td}>{service.service?.name || service.name}</td>
+                  <td style={styles.td}>{service.service?.unit || service.unit || ''}</td>
                   <td style={styles.td}>{service.quantity ?? ''}</td>
                   <td style={styles.td}>{formatMoney(price)}</td>
                   <td style={styles.td}>{formatMoney(lineTotal)}</td>

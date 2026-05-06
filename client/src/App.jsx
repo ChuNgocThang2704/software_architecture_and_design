@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ToursPage from './pages/ToursPage';
 import SchedulePage from './pages/SchedulePage.jsx';
 import CustomerPage from './pages/CustomerPage.jsx';
@@ -36,6 +37,7 @@ function App() {
         <main style={styles.mainContent}>
           <Routes>
             <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/login" />} />
             <Route path="/tours" element={user ? <ToursPage /> : <Navigate to="/login" />} />
             <Route path="/booking/:tourId" element={user ? <SchedulePage /> : <Navigate to="/login" />} />

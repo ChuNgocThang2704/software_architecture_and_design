@@ -1,7 +1,6 @@
 package com.example.partner_service.controller;
 
-import com.example.partner_service.dto.PartnerRequest;
-import com.example.partner_service.dto.PartnerResponse;
+import com.example.partner_service.entity.Partner;
 import com.example.partner_service.service.PartnerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ public class PartnerController {
     private final PartnerService partnerService;
 
     @PostMapping
-    public ResponseEntity<PartnerResponse> createPartner(@Valid @RequestBody PartnerRequest request) {
+    public ResponseEntity<Partner> createPartner(@Valid @RequestBody Partner request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(partnerService.createPartner(request));
     }
 }

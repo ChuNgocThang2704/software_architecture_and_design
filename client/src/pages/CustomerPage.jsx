@@ -108,16 +108,16 @@ function CustomerPage() {
         <table style={styles.infoTable}>
           <tbody>
             <tr>
-              <td style={styles.infoLabel}>Tour</td>
-              <td style={styles.infoValue}>{tour.name}</td>
+              <td style={styles.infoLabel}>Tên tour</td>
+              <td style={styles.infoValue}>{tour?.name || schedule?.tour?.name || 'Đang cập nhật...'}</td>
             </tr>
             <tr>
               <td style={styles.infoLabel}>Lịch trình</td>
               <td style={styles.infoValue}>{formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}</td>
             </tr>
             <tr>
-              <td style={styles.infoLabel}>Loại lịch trình</td>
-              <td style={styles.infoValue}>{schedule.type}</td>
+              <td style={styles.infoLabel}>Loại vé</td>
+              <td style={styles.infoValue}>{schedule?.type || ''}</td>
             </tr>
           </tbody>
         </table>

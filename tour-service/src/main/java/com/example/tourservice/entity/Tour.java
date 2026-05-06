@@ -13,6 +13,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbltour")
@@ -43,9 +45,11 @@ public class Tour {
     @Column(length = 500)
     private String note;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tour")
     private List<Schedule> schedules = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tour")
     private List<TourAddon> tourServices = new ArrayList<>();
 

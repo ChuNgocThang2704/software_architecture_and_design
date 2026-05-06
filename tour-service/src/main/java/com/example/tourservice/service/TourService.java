@@ -2,9 +2,7 @@ package com.example.tourservice.service;
 
 import com.example.tourservice.dto.UpdateScheduleDetail;
 import com.example.tourservice.dto.UpdateSchedule;
-import com.example.tourservice.dto.ScheduleResponse;
-import com.example.tourservice.dto.TourAddonResponse;
-import com.example.tourservice.dto.TourResponse;
+
 import com.example.tourservice.entity.Schedule;
 import com.example.tourservice.entity.Tour;
 import com.example.tourservice.entity.TourAddon;
@@ -31,34 +29,27 @@ public class TourService {
     private final ScheduleRepository scheduleRepository;
     private final TourAddonRepository tourAddonRepository;
 
-    public List<TourResponse> getTours(String name) {
+    public List<Tour> getTours(String name) {
         log.info("TourService gọi db lấy danh sách tour.");
-        List<Tour> tours = (name != null && !name.isBlank())
+        return (name != null && !name.isBlank())
                 ? tourRepository.findByNameContainingIgnoreCase(name)
                 : tourRepository.findAll();
-        return tours.stream()
-                .map(this::mapTour)
-                .toList();
     }
 
-    public List<ScheduleResponse> getSchedulesByTour(Long tourId) {
+    public List<Schedule> getSchedulesByTour(Long tourId) {
         log.info("TourService gọi db lấy danh sách lịch trình của tour.");
         if (!tourRepository.existsById(tourId)) {
             throw new NotFoundException("Tour không tồn tại");
         }
-        return scheduleRepository.findByTourId(tourId).stream()
-                .map(this::mapSchedule)
-                .toList();
+        return scheduleRepository.findByTourId(tourId);
     }
 
-    public List<TourAddonResponse> getServicesByTour(Long tourId) {
+    public List<TourAddon> getServicesByTour(Long tourId) {
         log.info("TourService gọi db lấy danh sách dịch vụ đi kèm của tour.");
         if (!tourRepository.existsById(tourId)) {
             throw new NotFoundException("Tour không tồn tại");
         }
-        return tourAddonRepository.findByTourId(tourId).stream()
-                .map(this::mapAddon)
-                .toList();
+        return tourAddonRepository.findByTourId(tourId);
     }
 
 
@@ -85,44 +76,4 @@ public class TourService {
         scheduleRepository.saveAll(schedulesToUpdate);
     }
 
-    private TourResponse mapTour(Tour tour) {
-        return TourResponse.builder()
-                .id(tour.getId())
-                .name(tour.getName())
-                .destination(tour.getDestination())
-                .type(tour.getType())
-                .time(tour.getTime())
-                .status(tour.getStatus())
-                .note(tour.getNote())
-                .build();
-    }
-
-    private TourAddonResponse mapAddon(TourAddon addon) {
-        return TourAddonResponse.builder()
-                .id(addon.getId())
-                .serviceId(addon.getService().getId())
-                .partnerId(addon.getService().getPartnerId())
-                .name(addon.getService().getName())
-                .type(addon.getService().getType())
-                .unit(addon.getService().getUnit())
-                .price(addon.getPrice())
-                .quantity(addon.getQuantity())
-                .note(addon.getNote())
-                .build();
-    }
-
-    private ScheduleResponse mapSchedule(Schedule schedule) {
-        return ScheduleResponse.builder()
-                .id(schedule.getId())
-                .startDate(schedule.getStartDate())
-                .endDate(schedule.getEndDate())
-                .type(schedule.getType())
-                .adultPrice(schedule.getAdultPrice())
-                .childPrice(schedule.getChildPrice())
-                .quantity(schedule.getQuantity())
-                .note(schedule.getNote())
-                .tourId(schedule.getTour().getId())
-                .tourName(schedule.getTour().getName())
-                .build();
-    }
 }

@@ -2,13 +2,9 @@ package com.example.bookingservice.service;
 
 import com.example.bookingservice.client.CustomerClient;
 import com.example.bookingservice.client.TourClient;
+import com.example.bookingservice.client.dto.CustomerResponse;
 import com.example.bookingservice.client.dto.UpdateScheduleDetail;
 import com.example.bookingservice.client.dto.UpdateSchedule;
-import com.example.bookingservice.dto.CreateTicketRequest;
-import com.example.bookingservice.client.dto.CustomerResponse;
-import com.example.bookingservice.dto.ScheduleTicketRequest;
-import com.example.bookingservice.dto.ScheduleTicketResponse;
-import com.example.bookingservice.dto.TicketResponse;
 import com.example.bookingservice.entity.ScheduleTicket;
 import com.example.bookingservice.entity.Ticket;
 import com.example.bookingservice.exception.BadRequestException;
@@ -33,14 +29,14 @@ public class TicketService {
     private final TourClient tourClient;
     private final CustomerClient customerClient;
 
-    public TicketResponse createTicket(CreateTicketRequest request) {
+    public Ticket createTicket(Long tourId, Ticket request) {
         log.info("TicketService tiến hành đặt vé mới.");
         validateCustomer(request.getCustomerId());
         
         UpdateSchedule updateScheduleReq = new UpdateSchedule();
-        updateScheduleReq.setTourId(request.getTourId());
+        updateScheduleReq.setTourId(tourId);
         List<UpdateScheduleDetail> details = new java.util.ArrayList<>();
-        for (ScheduleTicketRequest itemReq : request.getScheduleTickets()) {
+        for (ScheduleTicket itemReq : request.getScheduleTickets()) {
             UpdateScheduleDetail detail = new UpdateScheduleDetail();
             detail.setScheduleId(itemReq.getScheduleId());
             detail.setQuantity(itemReq.getQuantity());
@@ -49,34 +45,24 @@ public class TicketService {
         updateScheduleReq.setItems(details);
         updateSchedule(updateScheduleReq);
 
-        Ticket ticket = new Ticket();
-        ticket.setUserId(request.getUserId());
-        ticket.setCustomerId(request.getCustomerId());
-        ticket.setDatePayment(request.getDatePayment());
-        ticket.setStatus(request.getStatus() == null || request.getStatus().isBlank() ? "PENDING" : request.getStatus());
-        ticket.setNote(request.getNote());
-        
-        for (ScheduleTicketRequest item : request.getScheduleTickets()) {
-            ScheduleTicket scheduleTicket = new ScheduleTicket();
-            scheduleTicket.setTicket(ticket);
-            scheduleTicket.setScheduleId(item.getScheduleId());
-            scheduleTicket.setQuantity(item.getQuantity());
-            scheduleTicket.setType(item.getType());
-            scheduleTicket.setNote(item.getNote());
-            ticket.getScheduleTickets().add(scheduleTicket);
+        request.setStatus(request.getStatus() == null || request.getStatus().isBlank() ? "PENDING" : request.getStatus());
+        if (request.getTotal() == null) {
+            request.setTotal(BigDecimal.ZERO);
+        }
+        for (ScheduleTicket st : request.getScheduleTickets()) {
+            st.setTicket(request);
         }
 
-        ticket.setTotal(request.getTotal() != null ? request.getTotal() : BigDecimal.ZERO);
-        Ticket savedTicket = ticketRepository.save(ticket);
-        return mapTicket(savedTicket);
+        Ticket savedTicket = ticketRepository.save(request);
+        return savedTicket;
     }
 
     @Transactional(readOnly = true)
-    public TicketResponse getTicket(Long id) {
+    public Ticket getTicket(Long id) {
         log.info("TicketService gọi db để lấy thông tin chi tiết vé.");
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Vé không tồn tại"));
-        return mapTicket(ticket);
+        return ticket;
     }
 
     private void validateCustomer(Long customerId) {
@@ -103,36 +89,4 @@ public class TicketService {
         }
     }
 
-    private TicketResponse mapTicket(Ticket ticket) {
-        String customerName = "";
-        try {
-            CustomerResponse customer = customerClient.getCustomerById(ticket.getCustomerId());
-            customerName = customer.getName();
-        } catch (Exception ignored) {
-        }
-
-        List<ScheduleTicketResponse> items = ticket.getScheduleTickets().stream()
-                .map(item -> {
-                     return ScheduleTicketResponse.builder()
-                            .id(item.getId())
-                            .scheduleId(item.getScheduleId())
-                            .quantity(item.getQuantity())
-                            .type(item.getType())
-                            .note(item.getNote())
-                            .build();
-                })
-                .toList();
-
-        return TicketResponse.builder()
-                .id(ticket.getId())
-                .userId(ticket.getUserId())
-                .customerId(ticket.getCustomerId())
-                .datePayment(ticket.getDatePayment())
-                .customerName(customerName)
-                .status(ticket.getStatus())
-                .note(ticket.getNote())
-                .total(ticket.getTotal())
-                .scheduleTickets(items)
-                .build();
-    }
 }
