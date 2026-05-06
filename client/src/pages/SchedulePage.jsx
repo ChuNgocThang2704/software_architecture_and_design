@@ -93,7 +93,7 @@ function SchedulePage() {
     return <p style={styles.errorText}>{error}</p>;
   }
 
-  const displayTourName = tour?.name || schedules[0]?.tourName || `Tour #${tourId}`;
+  const displayTourName = tour?.name || schedules[0]?.tourName || `Tour ${tourId}`;
   const displayTourDestination = tour?.destination || '';
   const displayTourType = tour?.type || '';
   const displayTourTime = tour?.time ? `${tour.time} ngày` : '';

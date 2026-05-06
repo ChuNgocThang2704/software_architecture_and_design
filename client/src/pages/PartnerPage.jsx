@@ -32,7 +32,7 @@ function PartnerPage({ user }) {
         </thead>
         <tbody>
           <tr>
-            <td colSpan="4" style={styles.tableCell}>Chưa có API danh sách đối tác để hiển thị dữ liệu.</td>
+            <td colSpan="4" style={styles.tableCell}>Chưa có danh sách.</td>
           </tr>
         </tbody>
       </table>

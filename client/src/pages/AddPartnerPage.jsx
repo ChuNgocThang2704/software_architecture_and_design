@@ -30,7 +30,6 @@ function AddPartnerPage({ user }) {
     <div style={styles.container}>
       <Link to="/partners" style={styles.backLink}>&larr; Quay lại danh sách đối tác</Link>
       <h2 style={styles.title}>Thêm đối tác mới</h2>
-
       <form onSubmit={handleCreatePartner} style={styles.form}>
         <div style={styles.formGroup}>
           <label style={styles.label}>Tên đối tác:</label>

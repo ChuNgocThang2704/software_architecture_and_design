@@ -34,7 +34,7 @@ public class TicketService {
     private final CustomerClient customerClient;
 
     public TicketResponse createTicket(CreateTicketRequest request) {
-        log.info("TicketService tiến hành xử lý luồng đặt vé mới.");
+        log.info("TicketService tiến hành đặt vé mới.");
         validateCustomer(request.getCustomerId());
         
         UpdateSchedule updateScheduleReq = new UpdateSchedule();
